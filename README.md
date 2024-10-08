@@ -29,37 +29,3 @@ Greenslip transforms event tickets, coupons, and loyalty programs into secure, t
    ```
    npm install
    ```
-
-3. Set up environment variables:
-   ```
-   cp .env.example .env
-   ```
-   Edit `.env` with your specific configuration.
-
-4. Start the development server:
-   ```
-   yarn start
-   ```
-   or
-   ```
-   npm start
-   ```
-
-5. Run the app on iOS or Android:
-   ```
-   yarn ios
-   ```
-   or
-   ```
-   yarn android
-   ```
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
-
-## Acknowledgments
-
-- Hat tip to anyone whose code was used
-- Inspiration
-- etc

@@ -1,10 +1,10 @@
 import { ScrollView, StyleSheet,TouchableOpacity, View, Image, StatusBar } from 'react-native'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Header from 'app/components/Header'
 import { Button, Screen, Text } from 'app/lib'
 import { darkTheme } from 'app/theme/colors'
 import { 
-  User, 
+  UserAdd,
   InfoCircle, 
   MessageQuestion, 
   Setting2, 
@@ -14,7 +14,8 @@ import {
 } from 'iconsax-react-native';
 import { StackNavigationProp } from '@react-navigation/stack'
 import { useNavigation } from '@react-navigation/native'
-import { sizes } from 'app/constants/sizes'
+import { sizes } from 'app/constants/sizes';
+import { useOkto, OktoContextType, User } from 'okto-sdk-react-native'
 
 type RootStackParamList = {
   About: undefined;
@@ -27,12 +28,24 @@ type RootStackParamList = {
 type ProfileScreenNavigationProp = StackNavigationProp<RootStackParamList>;
 
 const Profile = () => {
+  const { getUserDetails } = useOkto() as OktoContextType;
+  const [userDetails, setUserDetails] = useState<User | null>(null)
   const navigation = useNavigation<ProfileScreenNavigationProp>();
 
   const navigateTo = (screen: keyof RootStackParamList) => {
     navigation.navigate(screen);
   };
 
+  useEffect(() => {
+    getUserDetails()
+      .then((result) => {
+        setUserDetails(result);
+      })
+      .catch((error) => {
+        console.log('error: ', error)
+      });
+  }, []);
+  
   return (
     <Screen style={styles.container}>
       <StatusBar backgroundColor={darkTheme.background} />

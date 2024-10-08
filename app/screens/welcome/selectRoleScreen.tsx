@@ -6,6 +6,8 @@ import { Screen, Button } from 'app/lib';
 import { Text } from 'app/lib';
 import { sizes } from 'app/constants/sizes';
 import { darkTheme } from 'app/theme/colors';
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import { useOkto, type OktoContextType } from 'okto-sdk-react-native';
 
 const { width } = Dimensions.get('window');
 
@@ -29,6 +31,11 @@ const IMAGE_SIZE = width / 1.5; // Adjust this value to change image size
 const IMAGE_SPACING = 10;
 const SCROLL_INTERVAL = 50;
 
+const webClientId = '';
+GoogleSignin.configure({
+  scopes: ['email'],
+  webClientId
+})
 const Marquee = ({ images, direction }: { images: any[], direction: 'left' | 'right' }) => {
   const scrollX = useRef(new Animated.Value(0)).current;
 
@@ -77,6 +84,26 @@ const Marquee = ({ images, direction }: { images: any[], direction: 'left' | 'ri
 
 export default function Details() {
   const navigation = useNavigation();
+  const { authenticate } = useOkto() as OktoContextType;
+
+  async function handleGoogleSignIn() {
+    try {
+      await GoogleSignin.hasPlayServices();
+      const response = await GoogleSignin.signIn();
+
+      const { idToken } = response;
+      authenticate(idToken, (result, error) => {
+        if (result) {
+          console.log('authentication successful')
+        }
+        if (error){
+          console.log('authentication error: ', error)
+        }
+      })
+    } catch (error) {
+      console.log('something went wrong, please try again')
+    }
+  }
 
   return (
     <Screen style={styles.container}>
@@ -85,6 +112,11 @@ export default function Details() {
         <Marquee images={bottomImages} direction="left" />
       </View>
       <View style={styles.footer}>
+      <Button 
+          variant='primary' 
+          label='consumer' 
+          onPress={handleGoogleSignIn}
+        />
         <Button 
           variant='primary' 
           label='consumer' 

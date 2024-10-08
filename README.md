@@ -54,10 +54,6 @@ Greenslip transforms event tickets, coupons, and loyalty programs into secure, t
    yarn android
    ```
 
-## Authors
-
-- Your Name - *Initial work* - [Luckyisrael](https://github.com/Luckyisrael)
-
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details

@@ -10,6 +10,10 @@ npm-debug.*
 *.orig.*
 web-build/
 
+greenslip-backend/node_modules/
+greenslip-backend/.env
+greenslip-backend/package-lock.json
+greenslip-backend/yarn.lock
 
 
 

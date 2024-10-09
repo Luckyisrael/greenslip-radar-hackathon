@@ -20,6 +20,7 @@ import GreenslipsMasonry from 'app/components/GreenslipMasonary';
 import { darkTheme } from 'app/theme/colors';
 import Header from 'app/components/Header';
 import { Screen } from 'app/lib';
+import { useUserStore } from 'app/store/userStore';
 
 const { height, width } = Dimensions.get('window');
 
@@ -28,6 +29,7 @@ const DiscoverScreen: React.FC = () => {
   const [filteredGreenslips, setFilteredGreenslips] = useState<Greenslip[]>(greenslips);
   const [isFocused, setIsFocused] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const user = useUserStore((state) => state.user);
   
   const animatedValue = useRef(new Animated.Value(0)).current;
   const inputRef = useRef<TextInput>(null);
@@ -83,7 +85,8 @@ const DiscoverScreen: React.FC = () => {
       style={styles.container} 
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0} // Adjust this value as needed
-    ><Header />
+    >
+      <Header userName={user.name} />
       <Animated.View 
         style={[
           styles.searchContainer, 

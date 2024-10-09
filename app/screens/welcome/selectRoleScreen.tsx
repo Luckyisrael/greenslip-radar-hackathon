@@ -8,6 +8,8 @@ import { sizes } from 'app/constants/sizes';
 import { darkTheme } from 'app/theme/colors';
 import { ConfigureParams, GoogleSignin, GoogleSigninButton } from '@react-native-google-signin/google-signin';
 import { useOkto, type OktoContextType } from 'okto-sdk-react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { CustomUser, useUserStore } from 'app/store/userStore';
 
 const { width } = Dimensions.get('window');
 
@@ -31,20 +33,23 @@ const IMAGE_SIZE = width / 1.5; // Adjust this value to change image size
 const IMAGE_SPACING = 10;
 const SCROLL_INTERVAL = 50;
 
-const webClientId = process.env.EXPO_PUBLIC_GOOGLE_SIGNIN_WEB_ID;
+const webClientId = '52062429013-sfc5sbkvhisitbj2gk5t6uuvmaaelgm3.apps.googleusercontent.com';
 
 GoogleSignin.configure({
   scopes: ['email', 'profile'],
   webClientId,
 })
 
-interface SignInProps {
-  onSignIn: (idToken: string) => void;
+interface GoogleSignInResponse {
+  user: CustomUser;
+  idToken: string | null;
 }
 
-export default function Details( { onSignIn }: SignInProps) {
+export default function Details() {
   const navigation = useNavigation();
   const { authenticate } = useOkto() as OktoContextType;
+  const setUser = useUserStore((state) => state.setUser);
+
   const [userInfo, setUserInfo] = useState('')
   
   const configure = () => {
@@ -62,22 +67,34 @@ export default function Details( { onSignIn }: SignInProps) {
     try {
       await GoogleSignin.hasPlayServices();
       const response = await GoogleSignin.signIn();
-      console.log('response: ', response)
-      //setUserInfo(response)
-      const { idToken } = response;
-      authenticate(idToken, (result, error) => {
-        if (result) {
-          console.log('authentication successful')
-          navigation.navigate('TabScreens', { screen: 'Dashboard'})
-        }
-        if (error){
-          console.log('authentication error: ', error)
-        }
-      })
+      console.log('response: ', response);
+
+      const { user, idToken } = response.data;
+
+      if (idToken) {
+        authenticate(idToken, (result, error)=> {
+          if (result) {
+            console.log('Authentication successful');
+            setUser(user);
+            navigation.navigate('TabScreens', { screen: 'Dashboard' });
+          } else {
+            console.log('Authentication failed');
+          }
+        });
+        
+      } else {
+        console.log('No idToken received');
+      }
     } catch (error) {
-      console.log('something went wrong, please try again', error)
+      console.log('Something went wrong, please try again', error);
     }
-  }
+  };
+  const logout = useUserStore((state) => state.logout);
+  const handleLogout = async () => {
+    await logout();
+    // Navigate to Login screen or any other appropriate screen after logout
+    navigation.navigate('Overview' as never);
+  };
 
   return (
     <Screen style={styles.container}>
@@ -87,12 +104,13 @@ export default function Details( { onSignIn }: SignInProps) {
       </View>
       <View style={styles.footer}>
         
-        <GoogleSigninButton size={GoogleSigninButton.Size.Wide} color={GoogleSigninButton.Color.Dark} onPress={handleGoogleSignIn} />
+        <GoogleSigninButton style={{alignSelf: 'center'}} size={GoogleSigninButton.Size.Wide} color={GoogleSigninButton.Color.Dark} onPress={handleGoogleSignIn} />
         <Text family='light' color={darkTheme.text} style={{ alignSelf: 'center'}}> or </Text>
         <Button 
           variant='primary' 
           label='consumer' 
-          onPress={() => { navigation.navigate('ConsumerAuth' as keyof RootStackParamList) }}
+          onPress={ handleLogout}
+          
         />
         <Button 
           variant='secondary' 

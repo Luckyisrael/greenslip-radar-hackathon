@@ -5,12 +5,15 @@ import { ProfileCircle, Notification } from 'iconsax-react-native';
 import { sizes } from 'app/constants/sizes';
 import { darkTheme } from 'app/theme/colors';
 
-const Header = () => {
+interface HeaderProps {
+  userName: string;
+}
+const Header = ({ userName }: HeaderProps) => {
   return (
     <View style={styles.container}>
         <ProfileCircle size={sizes.iconSize.large + 10} color={darkTheme.accent} variant="Bulk"/>
       <View style={{flex: 1}}>
-        <Text size={sizes.fontSize.large} family='bold' color={darkTheme.text}>Welcome, Lucky</Text>
+        <Text size={sizes.fontSize.large} family='bold' color={darkTheme.text}>Welcome, {userName}</Text>
         <Text size={sizes.fontSize.small} family='light' color={darkTheme.text}>HN7cABqLq46Es1jh92dQQi.......</Text>
       </View>
       <View style={{backgroundColor: darkTheme.surface, borderRadius: 50, padding: 10, justifyContent: 'center', alignItems: 'center'}}>

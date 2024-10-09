@@ -16,6 +16,9 @@ import PaymentModal from 'app/components/PaymentModal';
 import FloatingActionButton from 'app/components/FloatingActionButton';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
+import { useUserStore } from 'app/store/userStore';
+
+
 // Dummy data
 const userData = {
   location: 'Port Harcourt, Nigeria.',
@@ -44,8 +47,8 @@ type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList, 'CreateG
 
 
 const Home = () => {
-
   const navigation = useNavigation<HomeScreenNavigationProp>();
+  const user = useUserStore((state) => state.user);
 
   const handleFABPress = () => {
     navigation.navigate('CreateGreenslip');
@@ -68,10 +71,18 @@ const Home = () => {
     // Add logic to save the Greenslip
   };
 
+  if (!user) {
+    return (
+      <View style={styles.container}>
+        <Text>No user logged in</Text>
+      </View>
+    );
+  }
+
   return (
     <Screen style={styles.container}>
       <StatusBar backgroundColor={darkTheme.background} />
-      <Header />
+      <Header userName={user.name} />
       <GreenslipStats
       location={userData.location}
         totalClaimed={userData.totalClaimed}

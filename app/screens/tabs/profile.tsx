@@ -16,6 +16,7 @@ import { StackNavigationProp } from '@react-navigation/stack'
 import { useNavigation } from '@react-navigation/native'
 import { sizes } from 'app/constants/sizes';
 import { useOkto, OktoContextType, User } from 'okto-sdk-react-native'
+import { useUserStore } from 'app/store/userStore';
 
 type RootStackParamList = {
   About: undefined;
@@ -31,36 +32,62 @@ const Profile = () => {
   const { getUserDetails } = useOkto() as OktoContextType;
   const [userDetails, setUserDetails] = useState<User | null>(null)
   const navigation = useNavigation<ProfileScreenNavigationProp>();
+  const user = useUserStore((state) => state.user);
+  const logout = useUserStore((state) => state.logout);
 
   const navigateTo = (screen: keyof RootStackParamList) => {
     navigation.navigate(screen);
   };
+  const handleLogout = async () => {
+    await logout();
+    // Navigate to Login screen or any other appropriate screen after logout
+    navigation.navigate('Overview' as never);
+  };
+
 
   useEffect(() => {
     getUserDetails()
       .then((result) => {
         setUserDetails(result);
+        console.log('user deets', userDetails)
       })
       .catch((error) => {
         console.log('error: ', error)
       });
   }, []);
-  
+
+  if (!user) {
+    return (
+      <View style={styles.container}>
+        <Text>No user logged in</Text>
+        <Button label="Go to Login" onPress={() => navigation.navigate('Login' as never)} />
+      </View>
+    );
+  }
+
   return (
     <Screen style={styles.container}>
       <StatusBar backgroundColor={darkTheme.background} />
       <ScrollView>
         <View style={styles.header}>
-          <Image 
-            source={{ uri: 'https://via.placeholder.com/150' }} 
-            style={styles.profileImage}
-          />
+          
+           {user?.photo && (
+              <Image
+                source={{ uri: user.photo }}
+                style={styles.profileImage}
+              />
+            )}
           <Text style={styles.name} family='bold' size={sizes.fontSize.xlarge} color={darkTheme.text}>
-            Lucky Israel
+            {user?.name}
           </Text>
-          <Text style={styles.email} family='regular' size={sizes.fontSize.small} color={darkTheme.textDark}>
-            Luckyisrael4real@gmail.com
-          </Text>
+          <View style={{alignItems: 'center'}}>
+            <Text  family='regular' size={sizes.fontSize.small} color={darkTheme.textDark}>
+              {userDetails?.email}
+            </Text>
+            <Text style={styles.email} family='regular' size={sizes.fontSize.tiny} color={darkTheme.textDark}>
+              {userDetails?.user_id}
+            </Text>
+          </View>
         </View>
 
         <View style={styles.navigationSection}>
@@ -93,7 +120,7 @@ const Profile = () => {
 
         <Button 
           label="Log Out" 
-          onPress={() => console.log('Logging out...')} 
+          onPress={handleLogout}
           style={{backgroundColor: darkTheme.error}}
           
         />

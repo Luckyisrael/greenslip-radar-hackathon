@@ -19,6 +19,7 @@ import Header from 'app/components/Header';
 import { Button, Text } from 'app/lib';
 import { sizes } from 'app/constants/sizes';
 import CustomInput from 'app/components/CustomInput';
+import { useUserStore } from 'app/store/userStore';
 
 const { width, height } = Dimensions.get('window');
 
@@ -27,6 +28,7 @@ const RedeemScreen: React.FC = () => {
   const [scanned, setScanned] = useState(false);
   const [isScanning, setIsScanning] = useState(false);
   const [manualCode, setManualCode] = useState('');
+  const user = useUserStore((state) => state.user);
   
   const scanAnimation = useRef(new Animated.Value(0)).current;
   const manualAnimation = useRef(new Animated.Value(0)).current;
@@ -97,7 +99,7 @@ const RedeemScreen: React.FC = () => {
     >
       <StatusBar backgroundColor={darkTheme.background} />
       <View style={styles.content}>
-      <Header />
+      <Header userName={user.name}/>
        {/*  <Text style={styles.title}>Redeem Your Greenslip</Text> */}
         
         <View style={styles.button} >

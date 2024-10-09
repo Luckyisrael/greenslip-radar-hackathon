@@ -60,7 +60,7 @@ const Profile = () => {
     return (
       <View style={styles.container}>
         <Text>No user logged in</Text>
-        <Button label="Go to Login" onPress={() => navigation.navigate('Login' as never)} />
+        <Button label="Go to Login" onPress={()=>{}} />
       </View>
     );
   }

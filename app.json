@@ -43,7 +43,6 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "googleServicesFile": "./GoogleService-Info.plist",
       "bundleIdentifier": "com.luckyisrael.cryptoCompass",
       "infoPlist": {
         "CFBundleURLTypes": [
@@ -60,7 +59,6 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "googleServicesFile": "./google-services.json",
       "package": "com.luckyisrael.cryptoCompass",
       "permissions": [
         "android.permission.CAMERA",

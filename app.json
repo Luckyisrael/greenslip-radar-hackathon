@@ -43,12 +43,22 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.luckyisrael.cryptoCompass"
+      "package": "com.luckyisrael.cryptoCompass",
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO"
+      ]
     },
     "extra": {
       "eas": {
         "projectId": "e4047b2b-0398-420a-8c0a-d2a8b7b249dd"
       }
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/e4047b2b-0398-420a-8c0a-d2a8b7b249dd"
     }
   }
 }

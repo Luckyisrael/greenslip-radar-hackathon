@@ -31,8 +31,8 @@ const IMAGE_SIZE = width / 1.5; // Adjust this value to change image size
 const IMAGE_SPACING = 10;
 const SCROLL_INTERVAL = 50;
 
-const webClientId = '52062429013-sfc5sbkvhisitbj2gk5t6uuvmaaelgm3.apps.googleusercontent.com';
-const androidClientId = '52062429013-jv2q53lh8fnfi8hq86uuso8c23am4jar.apps.googleusercontent.com'
+const webClientId = process.env.EXPO_PUBLIC_GOOGLE_SIGNIN_WEB_ID;
+
 GoogleSignin.configure({
   scopes: ['email', 'profile'],
   webClientId,
@@ -45,7 +45,8 @@ interface SignInProps {
 export default function Details( { onSignIn }: SignInProps) {
   const navigation = useNavigation();
   const { authenticate } = useOkto() as OktoContextType;
-const [userInfo, setUserInfo] = useState('')
+  const [userInfo, setUserInfo] = useState('')
+  
   const configure = () => {
     GoogleSignin.configure({
       scopes: ['email', 'profile'],

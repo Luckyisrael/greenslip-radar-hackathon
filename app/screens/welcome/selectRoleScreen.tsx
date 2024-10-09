@@ -1,12 +1,12 @@
 import { useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from '../../navigation';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { View, StyleSheet, ScrollView, Image, Dimensions, Animated, Easing, StatusBar } from 'react-native';
 import { Screen, Button } from 'app/lib';
 import { Text } from 'app/lib';
 import { sizes } from 'app/constants/sizes';
 import { darkTheme } from 'app/theme/colors';
-import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import { ConfigureParams, GoogleSignin, GoogleSigninButton } from '@react-native-google-signin/google-signin';
 import { useOkto, type OktoContextType } from 'okto-sdk-react-native';
 
 const { width } = Dimensions.get('window');
@@ -31,11 +31,77 @@ const IMAGE_SIZE = width / 1.5; // Adjust this value to change image size
 const IMAGE_SPACING = 10;
 const SCROLL_INTERVAL = 50;
 
-const webClientId = '';
+const webClientId = '52062429013-sfc5sbkvhisitbj2gk5t6uuvmaaelgm3.apps.googleusercontent.com';
+const androidClientId = '52062429013-jv2q53lh8fnfi8hq86uuso8c23am4jar.apps.googleusercontent.com'
 GoogleSignin.configure({
-  scopes: ['email'],
-  webClientId
+  scopes: ['email', 'profile'],
+  webClientId,
 })
+
+interface SignInProps {
+  onSignIn: (idToken: string) => void;
+}
+
+export default function Details( { onSignIn }: SignInProps) {
+  const navigation = useNavigation();
+  const { authenticate } = useOkto() as OktoContextType;
+const [userInfo, setUserInfo] = useState('')
+  const configure = () => {
+    GoogleSignin.configure({
+      scopes: ['email', 'profile'],
+      webClientId,
+    })
+  }
+
+  useEffect(()=> {
+    configure();
+  })
+
+  const handleGoogleSignIn = async () => {
+    try {
+      await GoogleSignin.hasPlayServices();
+      const response = await GoogleSignin.signIn();
+      console.log('response: ', response)
+      //setUserInfo(response)
+      const { idToken } = response;
+      authenticate(idToken, (result, error) => {
+        if (result) {
+          console.log('authentication successful')
+          navigation.navigate('TabScreens', { screen: 'Dashboard'})
+        }
+        if (error){
+          console.log('authentication error: ', error)
+        }
+      })
+    } catch (error) {
+      console.log('something went wrong, please try again', error)
+    }
+  }
+
+  return (
+    <Screen style={styles.container}>
+      <View style={styles.content}>
+        <Marquee images={topImages} direction="right" />
+        <Marquee images={bottomImages} direction="left" />
+      </View>
+      <View style={styles.footer}>
+        
+        <GoogleSigninButton size={GoogleSigninButton.Size.Wide} color={GoogleSigninButton.Color.Dark} onPress={handleGoogleSignIn} />
+        <Text family='light' color={darkTheme.text} style={{ alignSelf: 'center'}}> or </Text>
+        <Button 
+          variant='primary' 
+          label='consumer' 
+          onPress={() => { navigation.navigate('ConsumerAuth' as keyof RootStackParamList) }}
+        />
+        <Button 
+          variant='secondary' 
+          label='business' 
+          onPress={() => { navigation.navigate('BusinessAuth' as keyof RootStackParamList) }}
+        />
+      </View>
+    </Screen>
+  );
+}
 const Marquee = ({ images, direction }: { images: any[], direction: 'left' | 'right' }) => {
   const scrollX = useRef(new Animated.Value(0)).current;
 
@@ -81,56 +147,6 @@ const Marquee = ({ images, direction }: { images: any[], direction: 'left' | 'ri
     </View>
   );
 };
-
-export default function Details() {
-  const navigation = useNavigation();
-  const { authenticate } = useOkto() as OktoContextType;
-
-  async function handleGoogleSignIn() {
-    try {
-      await GoogleSignin.hasPlayServices();
-      const response = await GoogleSignin.signIn();
-
-      const { idToken } = response;
-      authenticate(idToken, (result, error) => {
-        if (result) {
-          console.log('authentication successful')
-        }
-        if (error){
-          console.log('authentication error: ', error)
-        }
-      })
-    } catch (error) {
-      console.log('something went wrong, please try again')
-    }
-  }
-
-  return (
-    <Screen style={styles.container}>
-      <View style={styles.content}>
-        <Marquee images={topImages} direction="right" />
-        <Marquee images={bottomImages} direction="left" />
-      </View>
-      <View style={styles.footer}>
-      <Button 
-          variant='primary' 
-          label='consumer' 
-          onPress={handleGoogleSignIn}
-        />
-        <Button 
-          variant='primary' 
-          label='consumer' 
-          onPress={() => { navigation.navigate('ConsumerAuth' as keyof RootStackParamList) }}
-        />
-        <Button 
-          variant='secondary' 
-          label='business' 
-          onPress={() => { navigation.navigate('BusinessAuth' as keyof RootStackParamList) }}
-        />
-      </View>
-    </Screen>
-  );
-}
 
 const styles = StyleSheet.create({
   container: {

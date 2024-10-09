@@ -10,8 +10,8 @@ import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 
 //SplashScreen.preventAutoHideAsync();
 
-const oktoAppId = '884741c7-da1b-44bb-8562-41c1dba393d5';
-const oktoApiKey = '7c632d57-817e-407b-836a-a4ce76755944';
+const oktoAppId = '9c440b83-d50c-436d-8148-3943e48eddf5';
+const oktoApiKey = '7f6ef90a-f9e6-4ad5-9a86-db9ae544b54b';
 export default function App() {
 
   const [fontsLoaded] = useFonts({
